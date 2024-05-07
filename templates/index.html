@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MapReduce Word Count</title>
+</head>
+<body>
+    <h1>Web Application Performing Automated MapReduce</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <div>
+            <label for="datafile">Choose Data File:</label>
+            <input type="file" name="datafile" id="datafile" required>
+        </div>
+        <div>
+            <label for="threads">Choose the number of parallel threads:</label>
+            <input type="number" name="threads" id="threads" min="1" max="10" required>
+        </div>
+        <div>
+            <input type="submit" value="Perform MapReduce Computation">
+        </div>
+    </form>
+    
+    <div id="resultLabel"></div>
+    <pre id="result"></pre>
+    <div id="executionTime"></div>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = function(event) {
+            event.preventDefault();
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    document.getElementById('resultLabel').textContent = 'Display Results:';
+                    document.getElementById('result').textContent = JSON.stringify(response.result, null, 2);
+                    document.getElementById('executionTime').textContent =
+                        'Execution Time: ' + response.execution_time + ' seconds';
+                } else {
+                    document.getElementById('result').textContent = 'error';
+                }
+            };
+            xhr.open('POST', '/process', true);
+            xhr.send(new FormData(this));
+        };
+    </script>
+</body>
+</html>
